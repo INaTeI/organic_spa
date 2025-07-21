@@ -3,7 +3,7 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeybo
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 from datetime import datetime
 
-# Инициализация бота
+
 bot = telebot.TeleBot("8157830738:AAENZ5upaAIkRe6EHmelbVi1iOKwpD_bOxo")
 
 CHANNEL_USERNAME = "lolvalsvo"  # Публичный канал без "@"
@@ -11,7 +11,7 @@ MANAGERS_CHAT_ID = -1002505424671  # ID группы с менеджерами
 
 user_data = {}
 
-# Проверка подписки
+#Проверка
 def is_subscribed(user_id):
     try:
         member = bot.get_chat_member(f"@{CHANNEL_USERNAME}", user_id)
@@ -20,7 +20,7 @@ def is_subscribed(user_id):
         print("Ошибка при проверке подписки:", e)
         return False
 
-# Старт
+
 @bot.message_handler(commands=['start'])
 def start(message):
     user_id = message.chat.id
@@ -51,7 +51,7 @@ def choose_discount(user_id):
                      "<u>1. Вопрос:</u>\nКакое предложение вас интересует?",
                      reply_markup=markup, parse_mode='HTML')
 
-# Обработка выбора скидки
+
 @bot.callback_query_handler(func=lambda call: call.data.startswith("discount_"))
 def handle_discount(call):
     user_id = call.message.chat.id
@@ -73,7 +73,7 @@ def handle_discount(call):
                                "Выберите удобный период (в дальнейшем менеджер свяжется с вами для уточнения)",
                           reply_markup=markup, parse_mode='HTML')
 
-# Обработка выбора времени
+#выбор времени
 @bot.callback_query_handler(func=lambda call: call.data.startswith("time_"))
 def handle_time(call):
     user_id = call.message.chat.id
@@ -93,7 +93,7 @@ def handle_time(call):
     #                  parse_mode='HTML')
     get_phone(call.message)
 
-# Получение телефона
+#номер телефона
 def get_phone(message):
     # user_data[message.chat.id]['visit_time'] = message.text
     markup = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
@@ -105,14 +105,14 @@ def get_phone(message):
                      "Менеджер подберёт удобную дату и запишет вас на процедуру с учётом скидки ✍️",
                      reply_markup=markup, parse_mode='HTML')
 
-# Обработка контакта
+
 @bot.message_handler(content_types=['contact'])
 def contact_handler(message):
     contact = message.contact.phone_number
     user_data[message.chat.id]['phone'] = contact if contact.startswith('+') else f"+{contact}"
     send_final_message(message)
 
-# Обработка ручного ввода
+
 @bot.message_handler(func=lambda m: m.chat.type == 'private')
 def fallback(message):
     try:
@@ -155,6 +155,6 @@ def send_final_message(message):
 
     bot.send_message(MANAGERS_CHAT_ID, full_text)
 
-# Запуск
+
 print("Бот запущен")
 bot.polling(none_stop=True)
